@@ -4,6 +4,7 @@ include "../conn.php";
 @session_start();
 
 $id = @$_SESSION['id'];
+$username = $_SESSION['fullname'];
 
 if (!$id) {
     header('location:' . $host . 'signin.php');
@@ -14,7 +15,8 @@ $oldpassword = password_hash(strip_tags($_POST['old_password']), PASSWORD_BCRYPT
 $newPassword = password_hash(strip_tags($_POST['password']), PASSWORD_BCRYPT);
 
 // update data
-$user = "UPDATE users SET password = '$password' WHERE id = $id";
+$user = "UPDATE users u join user_profile up on up.id_user = u.id
+SET password = '$password' WHERE id = $id and up.fullname = '$username'";
 $conn->query($user);
 
 
