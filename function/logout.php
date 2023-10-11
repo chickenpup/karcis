@@ -2,6 +2,6 @@
 session_start();
 unset($_SESSION["id"]);
 
-header('location:../logout.php');
+header('location:../home.php');
 
 ?>

@@ -1,21 +1,25 @@
 <?php
 include "header.php";
 
-$id_booking = @$_GET['IDBOOKING'];
-$id_ticket = @$_GET['IDTICKET'];
-
 @session_start();
-    
-$id = @$_SESSION['id'];
+
+$id_booking = htmlspecialchars(@$_GET['IDBOOKING']);
+
+$id =  htmlspecialchars(@@$_SESSION['id']);
 
 if(!$id){
-    header('location:'.$host.'signin.php');
+    exit;
 }
 
 // get data user
-$user = "SELECT tickets.*, booking.id as id_booking, booking.price as booking_price FROM booking LEFT JOIN tickets ON tickets.id = booking.id_ticket WHERE booking.id = $id_booking AND tickets.id = $id_ticket";
+$user = "SELECT tickets.*, booking.id as id_booking, booking.price as booking_price, users.id as id_user FROM booking LEFT JOIN tickets ON tickets.id = booking.id_ticket INNER JOIN users ON users.id = booking.id_user WHERE booking.id = '$id_booking' AND users.id = $id";
 
 $result = $conn->query($user);
+
+if ($result->num_rows == 0) {
+    exit; 
+}
+
 $booking = $result->fetch_assoc()
 ?>
 

@@ -1,12 +1,13 @@
 <?php
 include "header.php";
 
-$id_booking = @$_GET['IDBOOKING'];
+@session_start();
 
+$id_booking = htmlspecialchars(@$_GET['IDBOOKING']);
+$id_user =  htmlspecialchars(@@$_SESSION['id']);
 
-    
 // get data user
-$ticket = "SELECT tickets.*, booking.id as id_booking, booking.price as booking_price, booking.id_user, user_profile.fullname FROM booking LEFT JOIN user_profile ON user_profile.id_user = booking.id_user LEFT JOIN tickets ON tickets.id = booking.id_ticket  WHERE booking.id = $id_booking";
+$ticket = "SELECT tickets.*, booking.id as id_booking, booking.price as booking_price, booking.id_user, user_profile.fullname FROM booking LEFT JOIN user_profile ON user_profile.id_user = booking.id_user LEFT JOIN tickets ON tickets.id = booking.id_ticket  WHERE booking.id = '$id_booking' AND booking.id_user = $id_user";
 
 $result = $conn->query($ticket);
 
@@ -27,13 +28,13 @@ $result = $conn->query($ticket);
         <h5 class="text-white">
             Search Result Booking ID
             <br><br>
-            <b><?php echo $_GET['IDBOOKING']; ?></b>
+            <b><?php echo $id_booking ?></b>
         </h5>
         <br><br>
         <div class="row">
             <?php
                 $no = 1;
-                if ($result->num_rows > 0) {
+                if ($result instanceof mysqli_result && $result->num_rows > 0) {
                 // output data of each row
                     while($row = $result->fetch_assoc()) {
 
@@ -58,14 +59,18 @@ $result = $conn->query($ticket);
                         <center>
                             <h3>Rp <?php echo number_format($row['booking_price'],2,',','.'); ?></h3>
                             <p class="text-dark" style="font-size: 12px;">belum termasuk PPn 10%</p>
-                            <a href="<?php echo $host;?>myBookingDetail.php?IDBOOKING=<?php echo $row['id_booking'];?>&IDTICKET=<?php echo $row['id'];?>" class="btn btn-primary" style="background-color: #4972E1; width: 70%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px; width: 290px;">
+                            <a href="<?php echo $host;?>myBookingDetail.php?IDBOOKING=<?php echo $row['id_booking'];?>" class="btn btn-primary" style="background-color: #4972E1; width: 70%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px; width: 290px;">
                                 Booking Details!
                             </a>
                         </center>
                     </div>
                 </div>
             </div>
-            <?php $no++; }  } ?>
+            <?php $no++; }  } 
+             else if ($id_booking) {
+            ?>
+            <p class="text-white" style="font-size: 12px;">No results found.</p>
+            <?php } ?>
         </div>
     </div>
 </div>
