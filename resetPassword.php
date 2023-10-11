@@ -1,6 +1,7 @@
 <?php
 include "conn.php";
 include "header.php";
+
 ?>
 
 <div class="bg-navy montserrat">
@@ -10,6 +11,11 @@ include "header.php";
             <div class="card-body">
                 <h4 class="text-dark">Ganti Password</h4>
                 <hr>
+                <?php if (@$_SESSION['status'] && @$_SESSION['status'] == 'failed') {
+                    if (@$_SESSION['err']) {
+                        echo '<p style="display: block;position: relative;text-align:center; color: rgb(244,71,107)">' . @$_SESSION['err'] . '</p>';
+                    }
+                } ?>
                 <form action="<?= $host; ?>function/actNewPassword.php" method="post">
                     <div class="form-group">
                         <label>Email</label>
@@ -19,8 +25,12 @@ include "header.php";
                         <label>Password baru</label>
                         <input type="password" name="password" placeholder="password" class="form-control mb-5">
                     </div>
+                    <div class="form-group">
+                        <label>Konfirmasi Password</label>
+                        <input type="password" name="confirmPassword" placeholder="password" class="form-control mb-5">
+                    </div>
 
-                    <input type="hidden" value="<?php echo $_GET['hash'];?>" name="token">
+                    <input type="hidden" value="<?php echo $_GET['hash']; ?>" name="token">
                     <hr>
                     <div class="form-group">
                         <button class="btn btn-primary btn-block montserrat" type="submit" style="background-color: #4972E1; width: 40%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px; margin-left: 510px;">Simpan
