@@ -24,7 +24,7 @@ if (!isset($_POST['token'])) {
     $errors['error'] = 'Password is required';
 } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errors["error"] = "Invalid email format";
-} else if (strlen($password) < 12 || !$hasSymbol || !$hasNumber || $hasUppercase || $hasLowercase) {
+} else if (strlen($password) < 12 || !$hasSymbol || !$hasNumber || !$hasUppercase || !$hasLowercase) {
     $errors['error'] = "Password is so weak! Please use uppercase, lowercase, number, and minimal 12 characters, ";
 } else if ($confirmPassword != $password) {
     $errors['error'] = "Password and confirmed password are different!";
@@ -55,8 +55,11 @@ if (empty($errors)) {
             }
         }
     } else {
-        $errors['error'] = 'Please retry to forgot your password!';
-        header('Location: ' . $host . 'resetPassword.php?hash=' . $token . '&status=failed&err=' . $errors['error']);
+        @session_start();
+        $err = 'Please Retry to reset your password!';
+        @$_SESSION['err'] = $err;
+        @$_SESSION['status'] = 'failed';
+        header('Location: ' . $host . 'resetPassword.php?hash=' . $token);
     }
 } else {
     @session_start();
