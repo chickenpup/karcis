@@ -3,9 +3,6 @@ include "header.php";
 require 'Database.php';
 
 $hash = @$_GET['hash'];
-if (!$hash) {
-	$hash = sha1('1234');
-}
 
 $db = new Database();
 

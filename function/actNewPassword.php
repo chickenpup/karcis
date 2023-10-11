@@ -35,24 +35,26 @@ if (empty($errors)) {
     $db = new Database();
     $result = $db->select('forgot_password', 'email', 'email = ? and hash = ? and flag = 0', array($email, $token));
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $getUser = $db->select('users', '*', 'email = ?', array($email));
-            if ($getUser && $getUser->rowCount() > 0) {
-                // $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
-                $u_user = $db->update('users', array('password' => $passwordHashed), 'email = ? and id = ?', array($email, $getUser->id));
-                if ($u_user > 0) {
-                    $dataLog = array(
-                        'id_user' => $getUser[0]['id'],
-                        'activity' => 'Update',
-                        'description' => json_encode($getUser['0'])
-                    );
-                    $log = $db->insert('log', $dataLog);
-                }
-
-                header('Location: ' . $host . 'signin.php?status=success&m=newPassword');
+    if (count($result) > 0) {
+        // while ($row = $result->fetch_assoc()) {
+        $getUser = $db->select('users', '*', 'email = ?', array($email));
+        if ($getUser && count($getUser) > 0) {
+            $id = $getUser[0]['id'];
+            $sql = "UPDATE users set password = ? where email = ? and id = ?";
+            $u_user = $db->query($sql, array($passwordHashed, $email, $id));
+            // $u_user = $db->query('users', array('password' => $passwordHashed), 'email = ? and id = ?', array($email, $id));
+            if ($u_user->rowCount() > 0) {
+                $dataLog = array(
+                    'id_user' => $getUser[0]['id'],
+                    'activity' => 'Update',
+                    'description' => json_encode($getUser['0'])
+                );
+                $log = $db->insert('log', $dataLog);
             }
+
+            header('Location: ' . $host . 'signin.php?status=success&m=newPassword');
         }
+        // }
     } else {
         @session_start();
         $err = 'Please Retry to reset your password!';
