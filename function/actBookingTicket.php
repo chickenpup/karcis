@@ -3,14 +3,44 @@
 
     @session_start();
 
-    $id_user = @$_SESSION['id'];
+    $id_user = htmlspecialchars(@$_SESSION['id']);
 
-    $submit = @$_POST['submit'];
+    if(!$id_user){
+        $_SESSION['status'] = 'failed';
+        $_SESSION['message'] = 'You must login first';
+        header('Location: '.$host.'signin.php' );
+        exit;
+    }
+
+    $check_user = "SELECT * FROM users WHERE id = $id_user";
+
+    $result = $conn->query($check_user);
+
+    if($result->num_rows < 1){
+        $_SESSION['status'] = 'failed';
+        $_SESSION['message'] = 'User not found';
+        header('Location: '.$host.'signin.php' );
+        exit;
+    }
+
+    $submit = htmlspecialchars( @$_POST['submit']);
     $identity = (int)$submit[0];
 
     $id_ticket = @$_POST['id_ticket'][$identity];
-    $seats = @$_POST['seats'][$identity];
-    $price = (int)@$_POST['price'][$identity];
+    $ticket = "SELECT * FROM tickets WHERE id = $id_ticket";
+    $result = $conn->query($ticket);
+
+    if($result->num_rows < 1) {
+        $_SESSION['status'] = 'failed';
+        $_SESSION['message'] = 'Ticket not found';
+        header('Location: '.$host.'tickets.php' );
+        exit;
+    }
+
+    $row = $result->fetch_assoc();
+
+    $price = $row['price'];
+    $seats = $row['seats'];
 
     $percent = 10;
 
@@ -22,15 +52,20 @@
     $total_price = $price + $percent;
 
 
-    // jika kursi 0
-    if($seats < 1){
-        header('Location: '.$host.'tickets.php?status=seatsFailed' );
+     // jika kursi 0
+
+     if($seats < 1){
+        $_SESSION['status'] = 'failed';
+        $_SESSION['message'] = 'No seats available';
+        header('Location: '.$host.'tickets.php' );
         exit;
     }
     
 
     // insert table booking
-    $sql = "INSERT INTO booking (id_user, id_ticket, status, price) VALUES ('$id_user', '$id_ticket', 0,'$total_price')";
+    $id_booking_generated = uniqid('BOOKING_', true);
+
+    $sql = "INSERT INTO booking (id, id_user, id_ticket, status, price) VALUES ('$id_booking_generated', '$id_user', '$id_ticket', 0,'$total_price')";
 
     if ($conn->query($sql) === TRUE) {
         // update seats in table tickets
@@ -39,9 +74,12 @@
                 echo("Error description: " . mysqli_error($conn));
                 exit;
             } else {
-
-                header('Location: '.$host.'myBookings.php?status=success');
-            }
+                $activity = "Create";
+                $description = "Booking Ticket";
+                $log = "INSERT INTO log (id_user, activity, description) VALUES ('$id_user', '$activity', '$description')";
+                $conn->query($log);
+                $_SESSION['status'] = 'success';
+                header('Location: '.$host.'myBookings.php');            }
     } else {
         echo("Error description: " . mysqli_error($conn));
     }
