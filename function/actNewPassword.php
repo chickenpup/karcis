@@ -2,6 +2,8 @@
 include "../conn.php";
 include "../Database.php";
 
+
+
 $token = @$_POST['token'];
 $password = strip_tags($_POST['password']);
 $passwordHashed = sha1(@$_POST['password']);
@@ -28,29 +30,37 @@ if (!isset($_POST['token'])) {
     $errors['error'] = "Password and confirmed password are different!";
 }
 
-$db = new Database();
-$result = $db->select('forgot_password', 'email', 'email = ? and hash = ? and flag = 0', array($email, $token));
+if (empty($errors)) {
 
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $getUser = $db->select('users', '*', 'email = ?', array($email));
-        if ($getUser && $getUser->rowCount() > 0) {
-            die(json_encode($getUser));
-            // $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
-            $u_user = $db->update('users', array('password' => $password), 'email = ? and id = ?', array($email, $getUser->id));
-            if ($u_user > 0) {
-                $dataLog = array(
-                    'id_user' => $getUser[0]['id'],
-                    'activity' => 'Forgot Password',
-                    'description' => json_encode($getUser['0'])
-                );
-                $log = $db->insert('log', $dataLog);
+    $db = new Database();
+    $result = $db->select('forgot_password', 'email', 'email = ? and hash = ? and flag = 0', array($email, $token));
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $getUser = $db->select('users', '*', 'email = ?', array($email));
+            if ($getUser && $getUser->rowCount() > 0) {
+                die(json_encode($getUser));
+                // $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
+                $u_user = $db->update('users', array('password' => $password), 'email = ? and id = ?', array($email, $getUser->id));
+                if ($u_user > 0) {
+                    $dataLog = array(
+                        'id_user' => $getUser[0]['id'],
+                        'activity' => 'Update',
+                        'description' => json_encode($getUser['0'])
+                    );
+                    $log = $db->insert('log', $dataLog);
+                }
+
+                header('Location: ' . $host . 'signin.php?status=success&m=newPassword');
             }
-
-            header('Location: ' . $host . 'signin.php?status=success&m=newPassword');
         }
+    } else {
+        $errors['error'] = 'Please retry to forgot your password!';
+        header('Location: ' . $host . 'resetPassword.php?hash=' . $token . '&status=failed&err=' . $errors['error']);
     }
 } else {
-    $errors['error'] = 'Please retry to forgot your password!';
-    header('Location: ' . $host . 'signin.php?status=failed&err=' . $errors['error']);
+    @session_start();
+    @$_SESSION['err'] = $errors['error'];
+    @$_SESSION['status'] = false;
+    header('Location: ' . $host . 'resetPassword.php?hash=' . $token);
 }

@@ -1,6 +1,8 @@
 <?php
 include "conn.php";
 include "header.php";
+
+var_dump($_SESSION);
 ?>
 
 <div class="bg-navy montserrat">
@@ -10,6 +12,11 @@ include "header.php";
             <div class="card-body">
                 <h4 class="text-dark">Ganti Password</h4>
                 <hr>
+                <?php if (@$_SESSION['status'] && @$_SESSION['status'] == 'failed') {
+                    if (@$_SESSION['err']) {
+                        echo @$_SESSION['err'];
+                    }
+                } ?>
                 <form action="<?= $host; ?>function/actNewPassword.php" method="post">
                     <div class="form-group">
                         <label>Email</label>
