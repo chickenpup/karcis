@@ -21,7 +21,7 @@ include "function/getProfile.php";
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" name="email" class="form-control" value="<?php echo $user_profile['email'];?>">
+                                <input type="email" name="email" class="form-control" value="<?php echo $user_profile['email'];?>" disabled>
                             </div>
                             <div class="form-group">
                                 <label>Phone Number</label>

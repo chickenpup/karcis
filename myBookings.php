@@ -1,6 +1,19 @@
 <?php
 include "header.php";
 include "function/getMyTickets.php";
+
+$message = '';
+$status = '';
+
+if (isset($_SESSION['status'])) {
+    $status = $_SESSION['status'];
+    unset($_SESSION['status']);
+}
+
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']);
+}
 ?>
 
 <div class="bg-navy montserrat">
@@ -41,7 +54,7 @@ include "function/getMyTickets.php";
                             <b style="font-size: 20px;"><?php echo $row['from'];?> - <?php echo $row['to'];?></b>
                         </div> 
                         <div class="col">
-                            <a href="<?php echo $host;?>myBookingDetail.php?IDBOOKING=<?php echo $row['id_booking'];?>&IDTICKET=<?php echo $row['id'];?>" class="btn btn-primary" style="background-color: #4972E1; width: 70%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px; width: 250px;">
+                            <a href="<?php echo $host;?>myBookingDetail.php?IDBOOKING=<?php echo $row['id_booking'];?>" class="btn btn-primary" style="background-color: #4972E1; width: 70%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px; width: 250px;">
                                 Booking Details!
                             </a>
                         </div>
