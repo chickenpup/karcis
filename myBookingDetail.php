@@ -8,6 +8,7 @@ $id_booking = htmlspecialchars(@$_GET['IDBOOKING']);
 $id =  htmlspecialchars(@@$_SESSION['id']);
 
 if(!$id){
+    header('location:'.$host.'signin.php');
     exit;
 }
 
