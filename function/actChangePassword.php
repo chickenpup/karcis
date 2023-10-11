@@ -6,7 +6,10 @@ include "../conn.php";
 $id = @$_SESSION['id'];
 $username = $_SESSION['fullname'];
 
-if (!$id) {
+if (!$id || empty($id)) {
+    header('location:' . $host . 'signin.php');
+}
+if(empty($username)){
     header('location:' . $host . 'signin.php');
 }
 
