@@ -114,7 +114,7 @@
         else {
             $sql = "INSERT INTO users_login_attemps( email, attemps ) VALUES( ?, ? )";
             $stmt = $conn->prepare( $sql );
-            $stmt->bind_param( "s", $email );
+            $stmt->bind_param( "ss", $email, $attemps );
             $stmt->execute();
         }
         
