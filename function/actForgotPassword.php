@@ -3,7 +3,7 @@ include "../conn.php";
 require '../Database.php';
 
 $errors = array();
-$email = @$_POST['email'];
+$email = strip_tags(@$_POST['email']);
 
 if (empty($email)) {
     $errors['email'] = "Email is Required";
@@ -20,7 +20,7 @@ if (empty($errors)) {
 
     $getEmail = $db->query($qGetEmail, array($email));
 
-    $hash = sha1($email);
+    $hash = password_hash($email, PASSWORD_BCRYPT);
     $link = $host . "resetPassword.php?hash=" . $hash;
 
 

@@ -9,9 +9,9 @@ if (!$id) {
     header('location:' . $host . 'signin.php');
 }
 
-$password = sha1($_POST['password']);
-$oldpassword = sha1($_POST['old_password']);
-$newPassword = hash('sha256', $_POST['password']);
+$password = password_hash(strip_tags($_POST['password']), PASSWORD_BCRYPT);
+$oldpassword = password_hash(strip_tags($_POST['old_password']), PASSWORD_BCRYPT);
+$newPassword = password_hash(strip_tags($_POST['password']), PASSWORD_BCRYPT);
 
 // update data
 $user = "UPDATE users SET password = '$password' WHERE id = $id";

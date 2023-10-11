@@ -4,11 +4,11 @@ include "../Database.php";
 
 
 
-$token = @$_POST['token'];
+$token =  strip_tags(@$_POST['token']);
 $password = strip_tags($_POST['password']);
-$passwordHashed = sha1(@$_POST['password']);
+$passwordHashed = password_hash($password, PASSWORD_BCRYPT);
 $confirmPassword = strip_tags($_POST['confirmPassword']);
-$email = @$_POST['email'];
+$email = strip_tags(@$_POST['email']);
 
 // Check for at least one symbol, number, uppercase letter, and lowercase letter
 $hasSymbol = preg_match('/[!@#\$%^&*()\-_+=\[\]{};:,.<>?]/', $password);
@@ -39,9 +39,8 @@ if (empty($errors)) {
         while ($row = $result->fetch_assoc()) {
             $getUser = $db->select('users', '*', 'email = ?', array($email));
             if ($getUser && $getUser->rowCount() > 0) {
-                die(json_encode($getUser));
                 // $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
-                $u_user = $db->update('users', array('password' => $password), 'email = ? and id = ?', array($email, $getUser->id));
+                $u_user = $db->update('users', array('password' => $passwordHashed), 'email = ? and id = ?', array($email, $getUser->id));
                 if ($u_user > 0) {
                     $dataLog = array(
                         'id_user' => $getUser[0]['id'],
