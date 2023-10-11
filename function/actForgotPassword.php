@@ -18,7 +18,7 @@ if (empty($errors)) {
 
     $qGetEmail = "SELECT Email from users where Email = ?";
 
-    $getEmail = $db->query($qGetEmail, $email);
+    $getEmail = $db->query($qGetEmail, array($email));
 
     $hash = sha1($email);
     $link = $host . "resetPassword.php?hash=" . $hash;

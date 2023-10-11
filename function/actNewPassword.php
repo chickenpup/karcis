@@ -1,23 +1,48 @@
 <?php
 include "../conn.php";
+include "../Database.php";
 
 $token = @$_POST['token'];
-$password = sha1(@$_POST['password']);
+$password = strip_tags($_POST['password']);
+$passwordHashed = sha1(@$_POST['password']);
+$confirmPassword = strip_tags($_POST['confirmPassword']);
 $email = @$_POST['email'];
 
-$sql = "SELECT * FROM forgot_password where email = '$email' and hash = '$token' and flag = 0";
-$result = $conn->query($sql);
+// Check for at least one symbol, number, uppercase letter, and lowercase letter
+$hasSymbol = preg_match('/[!@#\$%^&*()\-_+=\[\]{};:,.<>?]/', $password);
+$hasNumber = preg_match('/[0-9]/', $password);
+$hasUppercase = preg_match('/[A-Z]/', $password);
+$hasLowercase = preg_match('/[a-z]/', $password);
 
-    if ($result->num_rows > 0) {
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
-            $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
-            $conn->query($u_user);
+if (!isset($_POST['token'])) {
+    $errors['error'] = 'Please retry to forgot your password!';
+} else if (!isset($_POST['email'])) {
+    $errors['error'] = 'Email is required';
+} else if (!isset($_POST['password'])) {
+    $errors['error'] = 'Password is required';
+} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors["error"] = "Invalid email format";
+} else if (strlen($password) < 12 || !$hasSymbol || !$hasNumber || $hasUppercase || $hasLowercase) {
+    $errors['error'] = "Password is so weak! Please use uppercase, lowercase, number, and minimal 12 characters, ";
+} else if ($confirmPassword != $password) {
+    $errors['error'] = "Password and confirmed password are different!";
+}
 
-            header('Location: '.$host.'signin.php?status=success&m=newPassword');
+$db = new Database();
+$result = $db->select('forgot_password', 'email', 'email = ? and hash = ? and flag = 0', array($email, $token));
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $getUser = $db->select('users', 'id, email', 'email = ?', array($email));
+        if ($getUser && $getUser->rowCount() > 0) {
+            die(json_encode($getUser));
+            // $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
+            $u_user = $db->update('users', array('password' => $password), 'email = ? and id = ?', array($email, $getUser->id));
+
+            header('Location: ' . $host . 'signin.php?status=success&m=newPassword');
         }
-    } else{
-        header('Location: '.$host.'signin.php?status=failed');
     }
-
-?>
+} else {
+    $errors['error'] = 'Please retry to forgot your password!';
+    header('Location: ' . $host . 'signin.php?status=failed&err=' . $errors['error']);
+}

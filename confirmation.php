@@ -13,7 +13,7 @@ $reset_passwordSecure = "SELECT link FROM forgot_password WHERE hash = ?";
 
 $query = $db->query($reset_passwordSecure, array($hash));
 
-if ($query && $query->rowCount()) {
+if ($query && $query->rowCount() > 0) {
 
 	$r_reset_password = $query->fetchAll(PDO::FETCH_ASSOC);
 }

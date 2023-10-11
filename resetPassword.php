@@ -19,8 +19,12 @@ include "header.php";
                         <label>Password baru</label>
                         <input type="password" name="password" placeholder="password" class="form-control mb-5">
                     </div>
+                    <div class="form-group">
+                        <label>Konfirmasi Password</label>
+                        <input type="password" name="confirmPassword" placeholder="password" class="form-control mb-5">
+                    </div>
 
-                    <input type="hidden" value="<?php echo $_GET['hash'];?>" name="token">
+                    <input type="hidden" value="<?php echo $_GET['hash']; ?>" name="token">
                     <hr>
                     <div class="form-group">
                         <button class="btn btn-primary btn-block montserrat" type="submit" style="background-color: #4972E1; width: 40%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px; margin-left: 510px;">Simpan
