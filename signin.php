@@ -10,10 +10,18 @@ include "header.php";
                 <div class="card-body">
                     <form method="post" action="<?php echo $host;?>function/actSignin.php">
                          <!-- if signup failed -->
-                         <?php
+                        <?php
                             if(@$_GET['status'] == 'failed'){
                         ?>
                             <b style="display: block;position: relative;text-align:center; color: rgb(244,71,107)">Email dan Password tidak sesuai</b>
+                        <?php } else if(@$_GET['status'] == 'email'){ ?>
+                            <b style="display: block;position: relative;text-align:center; color: rgb(244,71,107)">Invalid Email</b>
+                        <?php } else if(@$_GET['status'] == 'null'){ ?>
+                            <b style="display: block;position: relative;text-align:center; color: rgb(244,71,107)"> Email dan Password tidak boleh kosong</b>
+                        <?php } else if(@$_GET['status'] == 'pass'){ ?>
+                            <b style="display: block;position: relative;text-align:center; color: rgb(244,71,107)">Format password tidak valid </b>
+                        <?php } else if(@$_GET['status'] == 'locked'){ ?>
+                            <b style="display: block;position: relative;text-align:center; color: rgb(244,71,107)">Akun Anda diblokir selama 2 menit, harap tunggu beberapa saat lagi </b>
                         <?php } else if(@$_GET['status'] == 'success'){ ?>
                             <b class="montserrat" style="text-align: center; color: #339FDC; font-size: 17px;" >Sign Up Successfull</b><br>
                         <?php } ?>
