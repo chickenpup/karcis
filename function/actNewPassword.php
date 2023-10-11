@@ -61,6 +61,6 @@ if (empty($errors)) {
 } else {
     @session_start();
     @$_SESSION['err'] = $errors['error'];
-    @$_SESSION['status'] = false;
+    @$_SESSION['status'] = 'failed';
     header('Location: ' . $host . 'resetPassword.php?hash=' . $token);
 }

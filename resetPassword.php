@@ -2,7 +2,6 @@
 include "conn.php";
 include "header.php";
 
-var_dump($_SESSION);
 ?>
 
 <div class="bg-navy montserrat">
@@ -14,7 +13,7 @@ var_dump($_SESSION);
                 <hr>
                 <?php if (@$_SESSION['status'] && @$_SESSION['status'] == 'failed') {
                     if (@$_SESSION['err']) {
-                        echo @$_SESSION['err'];
+                        echo '<p style="display: block;position: relative;text-align:center; color: rgb(244,71,107)">' . @$_SESSION['err'] . '</p>';
                     }
                 } ?>
                 <form action="<?= $host; ?>function/actNewPassword.php" method="post">
