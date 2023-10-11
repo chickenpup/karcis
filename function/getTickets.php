@@ -4,7 +4,7 @@
 $id = @$_SESSION['id'];
 
 if (!$id) {
-    header('location: '.$host.'/home.php');
+    header('location: '.$host.'home.php');
     exit;
 } else {
     $sql = "SELECT * FROM tickets";
