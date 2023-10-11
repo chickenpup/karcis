@@ -31,8 +31,8 @@ include "header.php";
                         <center>
                             <img src="assets/img/icon-landing.svg" class="img-responsive" style="margin-bottom: 70px; margin-top: 20px;">
                         </center>
-                        <div class="form-group"><input class="form-control" type="text" name="email" placeholder="Email"></div>
-                        <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+                        <div class="form-group"><input class="form-control" type="text" name="email" placeholder="Email" required></div>
+                        <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password" required></div>
                         <br>
                         <div class="form-group"><button class="btn btn-primary btn-block montserrat" type="submit" style="background-color: #4972E1; width: 70%; box-shadow: 0px 1px 8px 1px #4972E1; border-radius: 10px;">Sign In</button></div><a class="forgot montserrat" href="forgotPassword.php" style="font-size: 13px;"><u>Forgot password?</u></a>
                     </form>
