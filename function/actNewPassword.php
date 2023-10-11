@@ -33,11 +33,19 @@ $result = $db->select('forgot_password', 'email', 'email = ? and hash = ? and fl
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $getUser = $db->select('users', 'id, email', 'email = ?', array($email));
+        $getUser = $db->select('users', '*', 'email = ?', array($email));
         if ($getUser && $getUser->rowCount() > 0) {
             die(json_encode($getUser));
             // $u_user = "UPDATE users SET password = '$password' WHERE email = '$email'";
             $u_user = $db->update('users', array('password' => $password), 'email = ? and id = ?', array($email, $getUser->id));
+            if ($u_user > 0) {
+                $dataLog = array(
+                    'id_user' => $getUser[0]['id'],
+                    'activity' => 'Forgot Password',
+                    'description' => json_encode($getUser['0'])
+                );
+                $log = $db->insert('log', $dataLog);
+            }
 
             header('Location: ' . $host . 'signin.php?status=success&m=newPassword');
         }
